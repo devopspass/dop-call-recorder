@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: brew install python@3.13 ffmpeg
-      - run: python3.13 -m venv .venv && .venv/bin/pip install --no-deps --require-hashes -r requirements.lock && .venv/bin/pip install --no-deps pytest -e .
+      - run: python3.13 -m venv .venv && .venv/bin/pip install --no-deps --require-hashes -r requirements.lock && .venv/bin/pip install pytest && .venv/bin/pip install --no-deps -e .
       - name: pytest
         shell: bash
         run: |
