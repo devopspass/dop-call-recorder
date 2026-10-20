@@ -1,0 +1,50 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version matches tag
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          grep -q "__version__ = \"$VER\"" dop_call_recorder/__init__.py || { echo "::error::tag $GITHUB_REF_NAME != __version__"; exit 1; }
+          grep -q "^version = \"$VER\"" pyproject.toml || { echo "::error::tag $GITHUB_REF_NAME != pyproject version"; exit 1; }
+      - run: brew install python@3.13 ffmpeg
+      - run: python3.13 -m venv .venv && .venv/bin/pip install --no-deps --require-hashes -r requirements.lock && .venv/bin/pip install pytest && .venv/bin/pip install --no-deps -e .
+      - run: .venv/bin/python -m pytest -q
+      - run: OUT_DIR="$RUNNER_TEMP/app" app/build.sh
+      - name: Build tarball
+        id: tar
+        run: |
+          OUT="$(scripts/make-release.sh)"
+          echo "file=$(echo "$OUT" | head -1)" >> "$GITHUB_OUTPUT"
+          echo "sha=$(echo "$OUT" | tail -1 | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Release notes from CHANGELOG
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          awk -v v="## $VER" '$0==v{f=1;next} /^## /{f=0} f' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "Release $VER" > notes.md
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "${{ steps.tar.outputs.file }}" --title "$GITHUB_REF_NAME" --notes-file notes.md
+      - name: Update Homebrew tap
+        env:
+          TAP_TOKEN: ${{ secrets.TAP_TOKEN }}
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/dop-call-recorder-${VER}.tar.gz"
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/devopspass/homebrew-tap.git" tap
+          mkdir -p tap/Formula
+          sed -e "s|@URL@|$URL|" -e "s|@SHA256@|${{ steps.tar.outputs.sha }}|" -e '1d' Formula/dop-call-recorder.rb > tap/Formula/dop-call-recorder.rb
+          cd tap
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: dop-call-recorder ${VER}"
+          git push origin HEAD:main
