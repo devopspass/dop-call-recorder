@@ -7,7 +7,14 @@ jobs:
       - uses: actions/checkout@v4
       - run: brew install python@3.13 ffmpeg
       - run: python3.13 -m venv .venv && .venv/bin/pip install --no-deps --require-hashes -r requirements.lock && .venv/bin/pip install --no-deps pytest -e .
-      - run: .venv/bin/python -m pytest -q
+      - name: pytest
+        shell: bash
+        run: |
+          set +e
+          .venv/bin/python -m pytest -q -rf --tb=line 2>&1 | tee /tmp/pytest.txt
+          rc=${PIPESTATUS[0]}
+          grep -E "^(FAILED|ERROR)|Error|Fatal" /tmp/pytest.txt | head -15 | while read -r l; do echo "::error::${l:0:400}"; done
+          exit $rc
       - name: Swift builds (no signing identity needed, ad-hoc)
         run: |
           OUT_DIR="$RUNNER_TEMP/app" app/build.sh
