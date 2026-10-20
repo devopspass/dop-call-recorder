@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>com.devopspass.call-recorder</string>
+<key>CFBundleName</key><string>DOP Call Recorder</string>
+<key>CFBundleDisplayName</key><string>DOP Call Recorder</string>
+<key>CFBundleIconFile</key><string>AppIcon</string>
+<key>CFBundleExecutable</key><string>dop-call-recorder</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+<key>CFBundleShortVersionString</key><string>1.0.0</string>
+<key>CFBundleVersion</key><string>1</string>
+<key>LSMinimumSystemVersion</key><string>14.2</string>
+<key>LSUIElement</key><true/>
+<key>NSMicrophoneUsageDescription</key><string>DOP Call Recorder records your microphone during calls so they can be transcribed locally.</string>
+<key>NSAudioCaptureUsageDescription</key><string>DOP Call Recorder records the audio of call applications (e.g. Microsoft Teams) so calls can be transcribed locally.</string>
+</dict></plist>

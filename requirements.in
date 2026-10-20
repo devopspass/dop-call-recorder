@@ -1,0 +1,11 @@
+numpy
+onnxruntime
+webrtcvad-wheels
+mlx
+numba
+scipy
+tiktoken
+tqdm
+more-itertools
+huggingface_hub
+pillow

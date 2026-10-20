@@ -1,0 +1,143 @@
+[
+ {
+  "role": "AXWindow",
+  "title": "Weekly sync | Microsoft Teams",
+  "children": [
+   {
+    "role": "AXWebArea",
+    "title": "Weekly sync | Microsoft Teams",
+    "children": [
+     {
+      "role": "AXToolbar",
+      "desc": "Meeting controls",
+      "children": [
+       {
+        "role": "AXButton",
+        "desc": "Mic"
+       },
+       {
+        "role": "AXButton",
+        "desc": "Camera"
+       },
+       {
+        "role": "AXButton",
+        "desc": "Leave"
+       }
+      ]
+     },
+     {
+      "role": "AXGroup",
+      "desc": "Participants",
+      "children": [
+       {
+        "role": "AXList",
+        "desc": "Participants",
+        "children": [
+         {
+          "role": "AXRow",
+          "desc": "Doe, Jane (You), Organizer, Unmuted"
+         },
+         {
+          "role": "AXRow",
+          "desc": "Roe, Richard, Muted"
+         },
+         {
+          "role": "AXRow",
+          "desc": "Poe, Edgar, Unmuted"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "role": "AXGroup",
+      "desc": "Doe, Jane (You), Unmuted",
+      "children": [
+       {
+        "role": "AXStaticText",
+        "value": "Doe, Jane (You)"
+       }
+      ]
+     },
+     {
+      "role": "AXGroup",
+      "desc": "Roe, Richard, Muted",
+      "children": [
+       {
+        "role": "AXStaticText",
+        "value": "Roe, Richard"
+       }
+      ]
+     },
+     {
+      "role": "AXGroup",
+      "desc": "Poe, Edgar, Unmuted",
+      "children": [
+       {
+        "role": "AXStaticText",
+        "value": "Poe, Edgar"
+       }
+      ]
+     },
+     {
+      "role": "AXGroup",
+      "desc": "Edgar Poe is speaking"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "role": "AXWindow",
+  "title": "Chat | Demo Group | Microsoft Teams",
+  "children": [
+   {
+    "role": "AXGroup",
+    "desc": "Chat | Demo Group | Microsoft Teams - Web content - Profile 2",
+    "children": [
+     {
+      "role": "AXWebArea",
+      "title": "Chat | Demo Group | Microsoft Teams",
+      "children": [
+       {
+        "role": "AXButton",
+        "desc": "Your profile, status Available",
+        "dom": "idna-me-control-avatar-trigger"
+       },
+       {
+        "role": "AXOutline",
+        "desc": "Teams",
+        "children": [
+         {
+          "role": "AXRow",
+          "desc": "Chat Doe, Jane (You)",
+          "children": [
+           {
+            "role": "AXStaticText",
+            "value": "Doe, Jane (You)"
+           }
+          ]
+         },
+         {
+          "role": "AXRow",
+          "desc": "Chat Roe, Richard Available",
+          "children": [
+           {
+            "role": "AXStaticText",
+            "value": "Roe, Richard"
+           }
+          ]
+         },
+         {
+          "role": "AXRow",
+          "desc": "Group chat Platform Team"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+]

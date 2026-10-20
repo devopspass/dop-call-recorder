@@ -1,0 +1,90 @@
+# DOP Call Recorder configuration (read by `dop-recorder`; override path with DOP_CR_CONFIG)
+output_dir = "~/Transcripts"
+retention_days = 30
+apps = ["com.microsoft.teams2"]   # bundle IDs to watch (Zoom: us.zoom.xos, Slack: com.tinyspeck.slackmacgap)
+backend = "auto"                      # auto (mlx-whisper if importable + converted model present, else openai-whisper) | openai-whisper | mlx-whisper | whisper-cpp
+device = "cpu"                        # openai-whisper only: cpu | mps
+model = "large-v3-turbo"
+# model_url = ""   # optional own mirror of the MLX model (see README); default: OpenAI Azure CDN + local torch-free conversion
+vocabulary_file = "vocabulary.yaml"   # relative paths resolve against this file's directory
+language = ""                        # "" = auto-detect
+
+[transcribe]
+vad = "silero"                       # silero | webrtc | off
+no_speech_threshold = 0.6
+compression_ratio_threshold = 2.4
+logprob_threshold = -1.0
+condition_on_previous_text = false
+temperature = [0.0, 0.2, 0.4]
+
+# Placeholders for later milestones (detector/recorder/pipeline)
+[silence]
+end_of_call_seconds = 60
+min_call_seconds = 30
+
+[timeouts]
+detector_poll_seconds = 2
+transcribe_timeout_seconds = 7200
+
+[logging]
+# file = ""   # default <logs dir>/dop-call-recorder.log
+level = "INFO"
+
+[detector]   # M3: hysteresis for call detection (dop-recorder detect --watch; log: ~/Library/Logs/dop-call-recorder/detector.jsonl)
+start_after_seconds = 5
+end_after_seconds = 10
+title_regex = '(?i)\b(meeting|call|huddle|sharing control|compact view)\b'
+
+[mlx]          # M1: default model path <model_dir>/mlx-<model>  (scripts/convert_pt_to_mlx.py)
+model_path = ""
+
+[whispercpp]   # M1: default <model_dir>/ggml-<model>.bin; binary from PATH (brew install whisper-cpp)
+binary = ""
+model_path = ""
+beam_size = 1
+
+[preprocess]   # M1: optional audio pre-processing before the backend
+vad_trim = false   # cut non-speech (silero) before ASR, timestamps are mapped back
+loudnorm = false   # ffmpeg EBU R128 loudness normalization
+denoise = false    # ffmpeg afftdn before loudnorm
+
+work_dir = "~/Library/Application Support/dop-call-recorder/sessions"   # M4a: per-call session dirs (raw chunks, session.json)
+
+[pipeline]   # M4a
+window_minutes = 30          # long calls are transcribed in windows of this length ...
+overlap_seconds = 15         # ... overlapping by this much, stitched at the overlap midpoint
+nice = 10                    # os.nice() for the transcription worker
+chapter_gap_seconds = 60     # a pause this long starts a new chapter
+chapter_max_minutes = 10     # fixed-interval chapter split fallback
+echo_window_seconds = 2.0    # drop "Me" segments echoing "Others" text within this time (use headphones!)
+stale_heartbeat_seconds = 30 # recorder heartbeat older than this = orphaned session
+
+[search]   # M4b: SQLite FTS5 index over the transcripts (dop-recorder index / dop-recorder search / dop-recorder list)
+index_path = ""   # default <output_dir>/.index.sqlite
+
+[disk]         # M5: disk-space guard (volume of work_dir); below warn => notification, below critical => recording stops
+warn_gb = 5
+critical_gb = 1
+raw_max_age_days = 7   # failed sessions' raw WAVs are auto-cleaned after this (done sessions: right after transcription)
+check_seconds = 30
+
+[notify]       # M5: macOS notifications (osascript). Recording-started is on by default and meant to stay on.
+enabled = true
+on_start = true
+on_done = true
+on_error = true
+on_warn = true
+on_info = true
+sound = ""
+
+[agent]        # M5
+status_seconds = 2   # status.json heartbeat (menu-bar app + `dop-recorder status`)
+caffeinate = true    # hold a power assertion while recording/transcribing
+
+[ax]           # X1: speaker names + meeting title via the macOS Accessibility API (needs axhelper/build.sh + Accessibility grant; fail-safe)
+enabled = true
+interval_seconds = 1.0
+my_name = ""         # your display name for the "Me" stream; "" = detected from Teams ("Name (You)")
+max_seconds = 21600  # helper safety stop
+sample_seconds = 10  # ax_samples.jsonl: outline of the call window when it changed, at most every N s ...
+max_samples = 30     # ... at most this many per call (tuning data)

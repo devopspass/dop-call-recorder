@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>@LABEL@</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>@RECORDER_BIN@</string>
+        <string>run</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <!-- SIGTERM => dop-recorder finalizes the running recording (chunks flushed, queued); give it time -->
+    <key>ExitTimeOut</key>
+    <integer>60</integer>
+    <key>ProcessType</key>
+    <string>Adaptive</string>
+    <key>LowPriorityBackgroundIO</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>@LOGS@/launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>@LOGS@/launchd.err.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>@PATH@</string>
+        <key>HOME</key>
+        <string>@HOME@</string>
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+@ENV@
+    </dict>
+</dict>
+</plist>

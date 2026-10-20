@@ -1,0 +1,55 @@
+[
+ {
+  "role": "AXWindow",
+  "title": "Chat | Demo Group | Microsoft Teams",
+  "children": [
+   {
+    "role": "AXGroup",
+    "desc": "Chat | Demo Group | Microsoft Teams - Web content - Profile 2",
+    "children": [
+     {
+      "role": "AXWebArea",
+      "title": "Chat | Demo Group | Microsoft Teams",
+      "children": [
+       {
+        "role": "AXButton",
+        "desc": "Your profile, status Available",
+        "dom": "idna-me-control-avatar-trigger"
+       },
+       {
+        "role": "AXOutline",
+        "desc": "Teams",
+        "children": [
+         {
+          "role": "AXRow",
+          "desc": "Chat Doe, Jane (You)",
+          "children": [
+           {
+            "role": "AXStaticText",
+            "value": "Doe, Jane (You)"
+           }
+          ]
+         },
+         {
+          "role": "AXRow",
+          "desc": "Chat Roe, Richard Available",
+          "children": [
+           {
+            "role": "AXStaticText",
+            "value": "Roe, Richard"
+           }
+          ]
+         },
+         {
+          "role": "AXRow",
+          "desc": "Group chat Platform Team"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+]

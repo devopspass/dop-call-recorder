@@ -1,0 +1,30 @@
+#!/bin/bash
+# CLI shim for the signed .app. `start` goes through LaunchServices (`open`) so macOS attributes
+# Microphone / System Audio Recording permissions to the app itself (not to the calling terminal/process).
+# Use --direct to exec the binary in the foreground instead (permissions then belong to the parent process).
+APP="${DOP_RECORDER_APP:-$(cd "$(dirname "$0")/.." && pwd)/build/DOPCallRecorder.app}"
+STATE="${DOP_STATE_DIR:-${DOP_CR_STATE_DIR:-$HOME/Library/Application Support/dop-call-recorder}}"
+ENVARGS=(); [ -n "${DOP_STATE_DIR:-}" ] && ENVARGS=(--env "DOP_STATE_DIR=$DOP_STATE_DIR")
+BIN="$APP/Contents/MacOS/dop-call-recorder"
+[ -x "$BIN" ] || { echo "recorder not built: run app/build.sh" >&2; exit 1; }
+cmd="$1"
+if [ "$cmd" = start ] && [ "$2" != "--direct" ]; then
+  shift
+  # resolve --out to an absolute path (open runs the app with a different cwd)
+  args=(); while [ $# -gt 0 ]; do
+    if [ "$1" = --out ]; then mkdir -p "$2"; args+=(--out "$(cd "$2" && pwd)"); shift 2; else args+=("$1"); shift; fi
+  done
+  OUT=""; for ((i=0;i<${#args[@]};i++)); do [ "${args[i]}" = --out ] && OUT="${args[i+1]}"; done
+  PIDF="$STATE/recorder.pid"
+  if [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF")" 2>/dev/null && ps -p "$(cat "$PIDF")" -o command= | grep -q DOPCallRecorder; then
+    echo "already_running (pid $(cat "$PIDF"))" >&2; exit 3
+  fi
+  rm -f "$OUT/state.json"
+  /usr/bin/open -n -g "${ENVARGS[@]}" -a "$APP" --args start "${args[@]}" || exit 1
+  for _ in $(seq 1 50); do
+    if [ -f "$OUT/state.json" ] && grep -q '"state" : "recording"' "$OUT/state.json"; then echo "recording started"; exit 0; fi
+    sleep 0.2
+  done
+  echo "recorder did not start within 10s (see $STATE/recorder.log)" >&2; exit 1
+elif [ "$cmd" = start ]; then shift 2; exec "$BIN" start "$@"
+else exec "$BIN" "$@"; fi

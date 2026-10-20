@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dop-call-recorder"
+version = "1.0.0"
+requires-python = ">=3.12"
+# Torch-free core. NOTE: mlx-whisper itself declares torch as a hard dependency although it never imports it, so it is NOT listed
+# here: requirements.lock installs it with --no-deps (see Formula/dop-call-recorder.rb). The runtime deps of mlx-whisper are listed.
+dependencies = ["numpy", "onnxruntime", "webrtcvad-wheels", "mlx", "numba", "scipy", "tiktoken", "tqdm", "more-itertools", "huggingface_hub", "pyyaml", "pillow"]
+
+[project.optional-dependencies]
+mlx = ["mlx-whisper"]               # dev convenience (pulls torch via mlx-whisper metadata)
+openai = ["openai-whisper", "torch"]  # optional openai-whisper backend
+test = ["pytest"]
+
+[project.scripts]
+dop-recorder = "dop_call_recorder.cli:main"
+
+[tool.setuptools]
+packages = ["dop_call_recorder", "dop_call_recorder.backends"]
+
+[tool.setuptools.package-data]
+dop_call_recorder = ["data/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

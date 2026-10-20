@@ -1,0 +1,26 @@
+# DOP Call Recorder vocabulary (read via vocabulary_file in config.toml).
+# terms:       words Whisper should spell this way (initial_prompt, budget ~200 tokens).
+# corrections: deterministic post-Whisper replace, `Right: [wrong variants]` (whole words, case-insensitive).
+#              Never list ordinary English words as a wrong variant.
+# Edits apply without restarting the agent; re-run old calls with `dop-recorder reprocess <call>`.
+# Add your company/product/people names here.
+
+terms:
+  - Terraform
+  - Kubernetes
+  - GitHub
+  - GitLab
+  - Grafana
+  - PostgreSQL
+  - Kafka
+
+corrections:
+  Terraform: [terror form, terra form]
+  Kubernetes: [cooper netties, kubernetties]
+  kubectl: [cube control, cube cuddle, cube CTL]
+  GitHub: [git hub]
+  GitLab: [git lab]
+  Grafana: [Graffana, Grafanna, Grifana]
+  nginx: [engine X, engine ex]
+  OAuth: [O Auth, oh auth]
+  PostgreSQL: [post gress Q.L., postgres QL]
