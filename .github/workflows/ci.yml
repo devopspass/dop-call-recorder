@@ -1,0 +1,21 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install python@3.13 ffmpeg
+      - run: python3.13 -m venv .venv && .venv/bin/pip install --no-deps --require-hashes -r requirements.lock && .venv/bin/pip install --no-deps pytest -e .
+      - run: .venv/bin/python -m pytest -q
+      - name: Swift builds (no signing identity needed, ad-hoc)
+        run: |
+          OUT_DIR="$RUNNER_TEMP/app" app/build.sh
+  formula:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          brew tap-new --no-git local/ci
+          cp Formula/dop-call-recorder.rb "$(brew --repository local/ci)/Formula/"
+          brew style local/ci/dop-call-recorder
