@@ -2,9 +2,9 @@
 class DopCallRecorder < Formula
   desc "Call auto-recorder and offline Whisper transcriber for macOS (DevOps Pass)"
   homepage "https://github.com/devopspass/dop-call-recorder"
-  license "MIT"
   url "@URL@"
   sha256 "@SHA256@"
+  license "MIT"
 
   depends_on arch: :arm64
   depends_on "ffmpeg"
@@ -12,7 +12,9 @@ class DopCallRecorder < Formula
   depends_on "python@3.13"
 
   def install
-    odie "Xcode Command Line Tools are required to build the apps: run `xcode-select --install`" unless quiet_system("xcrun", "--find", "swiftc")
+    unless quiet_system("xcrun", "--find", "swiftc")
+      odie "Xcode Command Line Tools are required to build the app: run `xcode-select --install`"
+    end
     python = formula_opt_bin("python@3.13")/"python3.13"
     venv = libexec/"venv"
     system python, "-m", "venv", venv

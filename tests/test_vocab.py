@@ -54,5 +54,5 @@ def test_yaml_format(tmp_path):
 def test_repo_vocabulary_yaml_valid():
     cfg = c.load()
     assert cfg["vocabulary_file"].endswith("vocabulary.yaml")
-    assert "Flexcube" in c.load_vocabulary(cfg)
+    assert "Terraform" in c.load_vocabulary(cfg)
     assert c.apply_corrections(cfg, "merch request in terra ground") == "Merge Request in TerraGrunt"

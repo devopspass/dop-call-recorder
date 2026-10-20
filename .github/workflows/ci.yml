@@ -16,6 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          brew tap-new --no-git local/ci
-          cp Formula/dop-call-recorder.rb "$(brew --repository local/ci)/Formula/"
+          brew tap-new local/ci
+          F="$(brew --repository local/ci)/Formula/dop-call-recorder.rb"
+          sed -e "s|@URL@|https://example.com/dop-call-recorder-1.0.0.tar.gz|" -e "s|@SHA256@|$(printf '0%.0s' {1..64})|" Formula/dop-call-recorder.rb > "$F"
           brew style local/ci/dop-call-recorder
