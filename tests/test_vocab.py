@@ -55,4 +55,4 @@ def test_repo_vocabulary_yaml_valid():
     cfg = c.load()
     assert cfg["vocabulary_file"].endswith("vocabulary.yaml")
     assert "Terraform" in c.load_vocabulary(cfg)
-    assert c.apply_corrections(cfg, "merch request in terra ground") == "Merge Request in TerraGrunt"
+    assert c.apply_corrections(cfg, "deploy with terror form") == "deploy with Terraform"
